@@ -148,12 +148,30 @@ sample code bearing this copyright.
 #include "OneWire.h"
 #include "util/OneWire_direct_gpio.h"
 
-#ifdef ARDUINO_ARCH_ESP32
+#if defined(ARDUINO_ARCH_ESP32) || USE_FREERTOS
+
+#if __has_include("FreeRTOS.h")
+#include "FreeRTOS.h"
+#elif __has_include("freertos/FreeRTOS.h")
+#include "freertos/FreeRTOS.h"
+#endif
+
 // due to the dual core esp32, a critical section works better than disabling interrupts
-#  define noInterrupts() {portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;portENTER_CRITICAL(&mux)
-#  define interrupts() portEXIT_CRITICAL(&mux);}
+#  ifdef portMUX_TYPE
+#    define noInterrupts() {portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;portENTER_CRITICAL(&mux)
+#    define interrupts() portEXIT_CRITICAL(&mux);}
+#  else
+#    ifndef noInterrupts
+#      define noInterrupts() {portENTER_CRITICAL()
+#      define interrupts() portEXIT_CRITICAL();}
+#    endif
+#  endif
 // for info on this, search "IRAM_ATTR" at https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/general-notes.html 
-#  define CRIT_TIMING IRAM_ATTR
+#  ifdef IRAM_ATTR
+#    define CRIT_TIMING IRAM_ATTR
+#  else
+#    define CRIT_TIMING
+#  endif
 #else
 #  define CRIT_TIMING 
 #endif
