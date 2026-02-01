@@ -263,8 +263,8 @@ uint8_t CRIT_TIMING OneWire::read_bit(void)
 	uint8_t r;
 
 	noInterrupts();
-	DIRECT_MODE_OUTPUT(reg, mask);
 	DIRECT_WRITE_LOW(reg, mask);
+	DIRECT_MODE_OUTPUT(reg, mask);
 	delayMicroseconds(3);
 	DIRECT_MODE_INPUT(reg, mask);	// let pin float, pull up will raise
 	delayMicroseconds(10);
@@ -512,6 +512,7 @@ bool OneWire::search(uint8_t *newAddr, bool search_mode /* = true */)
    } else {
       for (int i = 0; i < 8; i++) newAddr[i] = ROM_NO[i];
    }
+   
    return search_result;
   }
 
