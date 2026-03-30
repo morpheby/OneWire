@@ -286,7 +286,7 @@ void directModeOutput(IO_REG_TYPE pin)
 #define DIRECT_MODE_INPUT(base, pin)    pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0))
 #define DIRECT_MODE_OUTPUT(base, pin)   pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_OUTPUT_PP, GPIO_NOPULL, 0))
 
-#elif defined(CH32V20x)
+#elif defined(CH32V20x) || defined(CH32V30x)
 #define STM_PIN_DATA CH_PIN_DATA
 #define PIN_TO_BASEREG(pin)             (0)
 #define PIN_TO_BITMASK(pin)             ((uint32_t)digitalPinToPinName(pin))
